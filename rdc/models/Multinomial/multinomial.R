@@ -3,12 +3,6 @@ source("../utils.R")
 library(ROSE)
 library(caret)
 
-train <- readRDS("../../data/train.rds")
-test <- readRDS("../../data/test.rds")
-
-features <- train[, -ncol(train)]
-response <- train$response
-
 fit_multinomial <- function(features, response, alpha_values = seq(0, 1, 0.5), k = 10, pca_thresh = 0.95) {
   library(glmnet)
   library(caret)
@@ -83,5 +77,28 @@ fit_multinomial <- function(features, response, alpha_values = seq(0, 1, 0.5), k
   ))
 }
 
-multinomial_model <- fit_multinomial(features, response)
-saveRDS(multinomial_model, file = "multinomial_model.rds")
+train_root <- "../../data/train"
+test_root <- "../../data/test"
+folders <- c("regular", "filtered")
+lengths <- c("500", "1000", "1500")
+shuffled <- c("_shuffled", "")
+
+for (folder in folders) {
+  for (shuffle in shuffled) {
+    for (length in lengths) {
+      train_file <- paste0("train", length, shuffle, ".rds")
+      test_file <- paste0("test", length, shuffle, ".rds")
+      train_path <- file.path(train_root, folder, train_file)
+      test_path <- file.path(test_root, folder, test_file)
+      
+      train <- readRDS(train_path)
+      test <- readRDS(test_path)
+      features <- train[, -ncol(train)]
+      response <- train$response
+      
+      multinomial_model <- fit_multinomial(features, response)
+      saveRDS(multinomial_model, file = paste0("multinomial", folder, length, shuffle, ".rds"))
+      print(paste0("Finished ", paste0("multinomial", folder, length, shuffle, ".rds")))
+    }
+  }
+}
