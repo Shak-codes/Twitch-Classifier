@@ -30,8 +30,22 @@ Furthermore, we want to utilise our models to gain an understanding of the pairw
 
 &nbsp;&nbsp;&nbsp;&nbsp;***2.5. Suspected Patterns.*** Given the above, it is natural to believe that the different communities surrounding each member would produce different patterns in the way they speak in chat. We wish to verify this through sentiment analysis. Aside from our conclusions regarding the sentiment analysis, we believe that the non shuffled data will have higher accuracy compared to the shuffled data due to overfitting regarding the temporal nature of the messages.<br>
 
+&nbsp;&nbsp;&nbsp;&nbsp;**3. Methodology.** We proceed to fit the following models with their specifications and reasoning detailed below.
 
+&nbsp;&nbsp;&nbsp;&nbsp;***3.1 Multinomial Logistic Regression***
 
-&nbsp;&nbsp;&nbsp;&nbsp;**3. Methodology.**
+&nbsp;&nbsp;&nbsp;&nbsp;***3.2 Linear Discriminant Analysis***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.3 Quadratic Discriminant Analysis***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.4 Naive Bayes***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.5 K-Nearest Neighbours***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.6 Support Vector Machines***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.7 Extreme Gradient Boosting***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.8 Neural Networks***
 
 &nbsp;&nbsp;&nbsp;&nbsp;**4. Results.**
