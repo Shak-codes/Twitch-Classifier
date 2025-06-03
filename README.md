@@ -25,23 +25,30 @@ Furthermore, we want to utilise our models to gain an understanding of the pairw
 
 &nbsp;&nbsp;&nbsp;&nbsp;***2.4. Exploratory Data Analysis.*** Given the above datasets, we now conduct an exploratory data analysis to understand any underlying patterns in our data, and make some final modifications so that we are ready for modelling.<br>
 
-&nbsp;&nbsp;&nbsp;&nbsp;****2.4.1. Output.**** Our response variable consists of 11253, 5643, and 3766 observations at the 500, 1000, and 1500 character level respectively. Plotting histograms of the response variable, we see that we generally have class imbalance and note that this must be accounted for during training. <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;*2.4.1. Output.* Our response variable consists of 11253, 5643, and 3766 observations at the 500, 1000, and 1500 character level respectively. Plotting histograms of the response variable, we see that we generally have class imbalance and note that this must be accounted for during training. <br> 
 
-&nbsp;&nbsp;&nbsp;&nbsp;****2.4.2. Features.**** Regarding our features, we do not bother with histograms as the message data is erratic and won't follow any specific distributions. The same applies for outlier capping/removal alongside boxplots, which are disregarded as it is natural for us to believe that outliers are representative of linguistic patterns and that capping or removing them will erase meaningful data. We proceed by removing features with near-zero variance, applying z-score normalization and removing highly correlated features by way of correlation matrices. The results from the transformations in each dataset are displayed below.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*2.4.2. Features.* Regarding our features, we do not bother with histograms as the message data is erratic and won't follow any specific distributions. The same applies for outlier capping/removal alongside boxplots, which are disregarded as it is natural for us to believe that outliers are representative of linguistic patterns and that capping or removing them will erase meaningful data. We proceed by removing features with near-zero variance, applying z-score normalization and removing highly correlated features by way of correlation matrices. The results from the transformations in each dataset are displayed below.<br>
 
 &nbsp;&nbsp;&nbsp;&nbsp;***2.5. Suspected Patterns.*** Given the above, it is natural to believe that the different communities surrounding each member would produce different patterns in the way they speak in chat. We wish to verify this through sentiment analysis. Aside from our conclusions regarding the sentiment analysis, we believe that the non shuffled data will have higher accuracy compared to the shuffled data due to overfitting regarding the temporal nature of the messages.<br>
 
-&nbsp;&nbsp;&nbsp;&nbsp;**3. Methodology.** We proceed to fit the following models with their specifications and reasoning detailed below.
+&nbsp;&nbsp;&nbsp;&nbsp;**3. Methodology.** We proceed to fit the following models with their specifications and reasoning detailed below. We note that for all models, 
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.1 Multinomial Logistic Regression***
+&nbsp;&nbsp;&nbsp;&nbsp;***3.1 Multinomial Logistic Regression.*** Multinomial logistic regression is a generalization of binary logistic regression that extends to multiple class scenarios. Essentially, given a response variable $Y \in \{1, \ldots, K\}$ and feature vector $x \in \mathbb{R}^p$ where $K$ is the total number of classes and $p$ is the number of features. The model estimates class probabilities as follows:
+<p align="center">$P(Y = k \mid x) = \frac{\exp(\beta_k^T x)}{\sum_{j=1}^{K} \exp(\beta_j^T x)}, \quad \text{for} \quad k = 1, \ldots, K.$</p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.2 Linear Discriminant Analysis***
+Where $\mathbb{B}_k \in \mathbb{R}^p$ is the weight vector for class $k$.
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.3 Quadratic Discriminant Analysis***
+&nbsp;&nbsp;&nbsp;&nbsp;*3.1.1 Assumptions.* We also have that Multinomial logistic regression relies on three key assumptions, that being: linear separability in the transformed log-odds space; independence of irrelevant alternatives; and no perfect multicollinearity among features.
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.4 Naive Bayes***
+&nbsp;&nbsp;&nbsp;&nbsp;*3.1.2 Fitting.* To fit this model, 
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.5 K-Nearest Neighbours***
+&nbsp;&nbsp;&nbsp;&nbsp;***3.2 Linear Discriminant Analysis.***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.3 Quadratic Discriminant Analysis.***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.4 Naive Bayes.***
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.5 K-Nearest Neighbours.***
 
 &nbsp;&nbsp;&nbsp;&nbsp;***3.6 Support Vector Machines***
 
