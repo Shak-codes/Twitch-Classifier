@@ -1,16 +1,15 @@
-setwd("~/GitHub/Twitch-Classifier/rdc/models/XGB")
+setwd("~/GitHub/Twitch-Classifier/rdc/models/KNN")
 source("../utils.R")
 library(ROSE)
 library(caret)
 
-fit_xgb <- function(features, response, k = 10, pca_thresh = 0.95) {
+fit_knn <- function(features, response, k = 10, pca_thresh = 0.95) {
   library(caret)
-  library(xgboost)
   
   set.seed(123)
   folds <- createFolds(response, k = k, list = TRUE, returnTrain = FALSE)
   
-  # Metric containers
+  # Initialize metric containers
   accuracy_vector <- numeric(k)
   kappa_vector <- numeric(k)
   sensitivity_vector <- vector("list", k)
@@ -27,40 +26,32 @@ fit_xgb <- function(features, response, k = 10, pca_thresh = 0.95) {
     X_test <- as.data.frame(features[test_idx, ])
     y_test <- as.factor(response[test_idx])
     
-    # --- Upsample for class balance ---
+    # --- Upsample to fix class imbalance ---
     balanced <- balance_dataset(X_train, y_train)
     X_train <- balanced[, !(names(balanced) %in% "response")]
     y_train <- as.factor(balanced$response)
     
-    # --- PCA ---
+    # --- PCA preprocessing ---
     pca_model <- preProcess(X_train, method = "pca", thresh = pca_thresh)
     X_train_pca <- predict(pca_model, X_train)
     X_test_pca <- predict(pca_model, X_test)
     
-    # --- Prepare data for caret training ---
+    # --- Train KNN model ---
     ctrl <- trainControl(method = "cv", number = 5)
     
-    xgb_grid <- expand.grid(
-      nrounds = c(100, 200),
-      max_depth = c(3, 6),
-      eta = c(0.05, 0.1),
-      gamma = 0,
-      colsample_bytree = 0.8,
-      min_child_weight = 1,
-      subsample = 0.8
-    )
-    
-    xgb_model <- train(
+    knn_model <- train(
       x = X_train_pca,
       y = y_train,
-      method = "xgbTree",
+      method = "knn",
       trControl = ctrl,
-      tuneGrid = xgb_grid,
-      verbosity = 0,
+      tuneLength = 10,  # Tries k = 1 to 10
       metric = "Accuracy"
     )
     
-    predictions <- predict(xgb_model, newdata = X_test_pca)
+    # --- Predict ---
+    predictions <- predict(knn_model, newdata = X_test_pca)
+    
+    # --- Evaluate ---
     conf <- confusionMatrix(predictions, y_test)
     
     accuracy_vector[i] <- conf$overall["Accuracy"]
@@ -70,6 +61,7 @@ fit_xgb <- function(features, response, k = 10, pca_thresh = 0.95) {
     balanced_accuracy_vector[[i]] <- conf$byClass[,"Balanced Accuracy"]
   }
   
+  # Return final metric summaries
   return(list(
     mean_accuracy = mean(accuracy_vector, na.rm = TRUE),
     mean_kappa = mean(kappa_vector, na.rm = TRUE),
@@ -98,9 +90,9 @@ for (folder in folders) {
       features <- train[, -ncol(train)]
       response <- train$response
       
-      xgb_model <- fit_xgb(features, response)
-      saveRDS(xgb_model, file = paste0("xgb", folder, length, shuffle, ".rds"))
-      print(paste0("Finished ", paste0("xgb", folder, length, shuffle, ".rds")))
+      knn_model <- fit_knn(features, response)
+      saveRDS(knn_model, file = paste0("knn", folder, length, shuffle, ".rds"))
+      print(paste0("Finished ", paste0("knn", folder, length, shuffle, ".rds")))
     }
   }
 }
