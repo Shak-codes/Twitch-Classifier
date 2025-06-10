@@ -42,18 +42,42 @@ Where $\mathbb{B}_k \in \mathbb{R}^p$ is the weight vector for class $k$.
 
 &nbsp;&nbsp;&nbsp;&nbsp;*3.1.2 Fitting.* To fit this model, 
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.2 Linear Discriminant Analysis.***
+&nbsp;&nbsp;&nbsp;&nbsp;***3.2 Linear Discriminant Analysis.*** Linear Discriminant Analysis is a generative model which assumes that the conditional distribution of each class is multivariate Gaussian with:
+<p align="center">$X \mid Y = k \sim \mathcal{N}(\mu_k, \Sigma)$</p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.3 Quadratic Discriminant Analysis.***
+Where $\mu_h$ is the class mean and $\Sigma$ is the shared covariance matrix. Furthermore, the above pave the way for the following decision rule:
+<p align="center">$\delta_k(x) = x^T \Sigma^{-1} \mu_k - \frac{1}{2} \mu_k^T \Sigma^{-1} \mu_k + \log \pi_k$</p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.4 Naive Bayes.***
+&nbsp;&nbsp;&nbsp;&nbsp;***3.3 Naive Bayes.*** Naive Bayes is another generative classification model rooted in Bayes' Theorem. The mathematical formulation is as follows:
+<p align="center">$P(Y = k \mid X = x) \propto P(Y = k) \prod_{j=1}^p P(X_j = x_j \mid Y = k)$</p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.5 K-Nearest Neighbours.***
+where $P(Y=k)$ is the class prior, $P(X_j=x_j | Y=k)$ is the class conditional distribution given the $j^{\text{th}}$ feature. Furthermore, while our features aren't necessarily continous(technically discrete since any feature belongs to the set of natural numbers), we consider them to be continuous since we have a wide enough range. This leads to: $X_j | Y = k$ being modeled as $X_j \mid Y = k \sim \mathcal{N}(\mu_{jk}, \sigma_{jk}^2)$
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.6 Support Vector Machines***
+&nbsp;&nbsp;&nbsp;&nbsp;***3.4 K-Nearest Neighbours.*** K-Nearest Neighbours is a non-parametric machine learning model for classification. The model makes predictions based on a given set of features by referencing the K nearest observations in the test set to the given set of features. To formalize the prediction for a given point $x$, we have...
+<p align="center">$\hat{Y}(x) = \arg\max_{k} \sum_{i \in \mathcal{N}_k(x)} \mathbf{1}\{Y_i = k\}$</p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.7 Extreme Gradient Boosting***
+Where $\mathcal{N}_k(x)$ is the set of indices that correspond to the $K$ closest points to $x$ in the train set.
 
-&nbsp;&nbsp;&nbsp;&nbsp;***3.8 Neural Networks***
+&nbsp;&nbsp;&nbsp;&nbsp;***3.5 Support Vector Machines*** Support Vector Machines are the first discriminative classifier we use. The model constructs a hyperplane in our high dimensional space that optimally separates classes with the largest possible margin. In simple binary classification, the optimization problem is as follows:
+<p align="center">$\min_{w, b, \xi} \frac{1}{2} \|w\|^2 + C \sum_{i=1}^n \xi_i \quad \text{subject to} \quad y_i(w^T x_i + b) \geq 1 - \xi_i, \; \xi_i \geq 0,$</p>
+
+Where $w$ and $b$ are parameters of the separating hyperplane, $\xi$ is the slack parameter, with $C$ being the regularization parameter. However, we are working with multiclass level classification, and so our optimization problem extends the above as shown below:
+<p align="center">$\hat{Y}(x) = \arg\max_k \, f_k(x)$</p>
+
+With $f_k(x)$ is the decision function output from the one-vs-rest Support Vector Machine which, intuitively, was trained to recognize class $k$ from the rest.
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.6 Extreme Gradient Boosting*** Extreme Gradient Boosting is an ensemble based learning method based on gradient-boosted decision trees. The model trains numerous trees in a sequential manner, where each subsequent tree attempts to fix the residual errors of the previous trees. The training is done by maximizing the following:
+<p align="center">$\mathcal{L}(\phi) = \sum_{i=1}^n \ell(y_i, \hat{y}_i) + \sum_{t=1}^T \Omega(f_t)$</p>
+
+Where $\ell$ is the loss function(which is differentiable), $\hat{y}_i$ is the predicted value, $f_t$ is the $t^{\text{th}}$ regression tree and finally $\Omega(f) = \gamma T + \frac{1}{2} \lambda \sum_{j=1}^T w_j^2$
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.7 Random Forests*** Random Forests are another ensemble based learning method that trains multiple decision trees on bootstrapped samples of the data. Each split in the tree is built by selecting a random subset of features, and selecting a feature that maximizes a certain criterian from said subset, all in order to reduce correlation between the varying trees. The final prediction is obtained by considering the majority vote between the trees. Formalizing this notion, we have the following formula:
+<p align="center">$\hat{Y}(x) = \text{majority\_vote}\left\{T_b(x)\right\}_{b=1}^B$</p>
+
+&nbsp;&nbsp;&nbsp;&nbsp;***3.8 Neural Networks*** Neural Networks are models composed of layers through interconnected units. Each layer operates on a linear transformation followed by a nonlinear activation function. Given $L$ hidden layers, the feedforward network is as shown below:
+<p align="center">$a^{(0)} = x \\
+a^{(\ell)} = g^{(\ell)}(W^{(\ell)} a^{(\ell-1)} + b^{(\ell)}), \quad \text{for } \ell = 1, \dots, L \\
+\hat{y} = \text{softmax}(W^{(L+1)} a^{(L)} + b^{(L+1)})
+$</p>
 
 &nbsp;&nbsp;&nbsp;&nbsp;**4. Results.**
