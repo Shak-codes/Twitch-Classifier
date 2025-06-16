@@ -27,3 +27,27 @@ balance_dataset <- function(features, response) {
   
   return(balanced)
 }
+
+load_models <- function(model_type, model_dir) {
+  setwd("~/GitHub/Twitch-Classifier/rdc/models")
+  
+  train_root <- "../data/train"
+  test_root <- "../data/test"
+  folders <- c("regular", "filtered")
+  lengths <- c("500", "1000", "1500")
+  shuffled <- c("_shuffled", "")
+  
+  model_list <- list()
+  
+  for (folder in folders) {
+    for (shuffle in shuffled) {
+      for (length in lengths) {
+        key <- paste0(model_type, folder, length, shuffle)
+        path <- file.path(model_dir, paste0(model_type, folder, length, shuffle, ".rds"))
+        model_list[[key]] <- readRDS(path)
+      }
+    }
+  }
+  
+  return(model_list)
+}
